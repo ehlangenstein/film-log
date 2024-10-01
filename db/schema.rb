@@ -10,12 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_01_203939) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_01_211927) do
   create_table "genres", force: :cascade do |t|
     t.integer "genre_id"
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "logged_movies", force: :cascade do |t|
+    t.integer "tmdb_id", null: false
+    t.string "title", null: false
+    t.text "overview"
+    t.string "poster_path"
+    t.string "release_date"
+    t.float "rating"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tmdb_id"], name: "index_logged_movies_on_tmdb_id", unique: true
   end
 
   create_table "users", force: :cascade do |t|
