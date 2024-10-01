@@ -18,3 +18,6 @@ group :development do
   gem "web-console"
 end
 
+# TMDB API
+gem 'themoviedb-api'
+
