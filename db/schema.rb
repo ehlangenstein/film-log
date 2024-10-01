@@ -21,12 +21,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_01_211927) do
   create_table "logged_movies", force: :cascade do |t|
     t.integer "tmdb_id", null: false
     t.string "title", null: false
+    # want to delete overview for now??
     t.text "overview"
     t.string "poster_path"
     t.string "release_date"
     t.float "rating"
+    t.integer "budget"
+    t.integer "revenue"
+    t.string "imdb_id"
+    # need to delete these 
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", null: false\
+    #what does this do?
     t.index ["tmdb_id"], name: "index_logged_movies_on_tmdb_id", unique: true
   end
 

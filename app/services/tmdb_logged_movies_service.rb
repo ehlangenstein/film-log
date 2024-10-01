@@ -28,10 +28,49 @@ class TmdbLoggedMoviesService
           movie.release_date = movie_data["release_date"]
           movie.rating = movie_data["rating"]
           movie.genre_ids = movie_data["genre_ids"]
+
         end
       end
     else
       puts "Error fetching movies from TMDB"
     end
   end
+
+  # Fetches detailed movie data and updates the record
+  def self.fetch_movie_details(tmdb_id)
+    url = URI("#{TMDB_API_URL_MOVIE_DETAILS}#{tmdb_id}?language=en-US")
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = true
+
+    request = Net::HTTP::Get.new(url)
+    request["accept"] = 'application/json'
+    request["Authorization"] = TMDB_API_KEY
+
+    response = http.request(request)
+    movie_data = JSON.parse(response.read_body)
+
+    if movie_data["id"]
+      # Find or update the movie with detailed information
+      logged_movie = LoggedMovie.find_or_create_by(tmdb_id: movie_data["id"]) do |movie|
+        movie.title = movie_data["title"]
+        movie.imdb_id = movie_data["imdb_id"]
+        movie.budget = movie_data["budget"]
+        movie.revenue = movie_data["revenue"]
+        movie.release_date = movie_data["release_date"]
+      end
+
+      # Associate genres with the movie
+      if movie_data["genres"]
+        movie_data["genres"].each do |genre_data|
+          genre = Genre.find_or_create_by(tmdb_id: genre_data["id"], name: genre_data["name"])
+          logged_movie.genres << genre unless logged_movie.genres.include?(genre)
+        end
+      end
+
+      logged_movie.save
+    else
+      puts "Error fetching movie details for TMDB ID: #{tmdb_id}"
+    end
+  end
 end
+
